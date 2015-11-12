@@ -19,6 +19,9 @@
 ;; remove menu bar
 (menu-bar-mode -1)
 
+;; remove tool bar
+(tool-bar-mode -1)
+
 ;; use spaces, not tabs
 (setq-default indent-tabs-mode nil)
 
@@ -38,15 +41,15 @@
 
 ;; turn on fancy C mode features
 (add-hook 'c-mode-common-hook
-	  (lambda ()
+          (lambda ()
             (setq c-default-style "k&r"
-		  c-basic-offset 4)
-	    (c-toggle-electric-state 1)
-	    (c-toggle-auto-newline 1)
-	    (c-toggle-hungry-state 1)
-	    (c-toggle-syntactic-indentation 1)
-	    (subword-mode)
-	    (define-key c-mode-base-map (kbd "RET") 'newline-and-indent)
+                  c-basic-offset 4)
+            (c-toggle-electric-state 1)
+            (c-toggle-auto-newline 1)
+            (c-toggle-hungry-state 1)
+            (c-toggle-syntactic-indentation 1)
+            (subword-mode)
+            (define-key c-mode-base-map (kbd "RET") 'newline-and-indent)
             (setq c-hanging-braces-alist
                   '((brace-list-open)
                      (brace-entry-open)
@@ -70,10 +73,10 @@
                     list-close-comma
                     scope-operator
                     one-liner-defun))
-	    (hs-minor-mode)))
+            (hs-minor-mode)))
 
 ;; switch styles for C++
 (add-hook 'c++-mode-hook
-	  (lambda ()
-	    (setq c-default-style "stroustrup")))
+          (lambda ()
+            (setq c-default-style "stroustrup")))
 (put 'upcase-region 'disabled nil)
