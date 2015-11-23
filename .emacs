@@ -16,6 +16,14 @@
  ;; If there is more than one, they won't work right.
  )
 
+;; let GUI emacs find aspell
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+(setq exec-path (append exec-path '("/usr/local/bin")))
+
+;; set up bash_profile for emacs shell
+(setq explicit-bash-args
+      '("--login" "--init-file" "~/.bash_profile" "-i"))
+
 ;; remove menu bar
 (menu-bar-mode -1)
 
@@ -80,3 +88,9 @@
           (lambda ()
             (setq c-default-style "stroustrup")))
 (put 'upcase-region 'disabled nil)
+
+;; add word wrapping for latex mode
+(add-hook 'latex-mode-hook
+          (lambda()
+            (set-fill-column 80)
+            (turn-on-auto-fill)))
