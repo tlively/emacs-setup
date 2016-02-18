@@ -8,7 +8,11 @@
  '(ansi-color-names-vector
    ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
  '(custom-enabled-themes (quote (manoj-dark)))
- '(inhibit-startup-screen t))
+ '(inhibit-startup-screen t)
+ '(package-archives
+   (quote
+    (("gnu" . "http://elpa.gnu.org/packages/")
+     ("melpa-stable" . "http://stable.melpa.org/packages/")))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -50,8 +54,10 @@
 ;; turn on fancy C mode features
 (add-hook 'c-mode-common-hook
           (lambda ()
-            (setq c-default-style "k&r"
-                  c-basic-offset 4)
+;;            (setq c-default-style "k&r"
+;;                  c-basic-offset 4)
+            (setq c-default-style "linux"
+                  c-basic-offset 8) ;; for CS161
             (c-toggle-electric-state 1)
             (c-toggle-auto-newline 1)
             (c-toggle-hungry-state 1)
@@ -79,8 +85,11 @@
                   '(empty-defun-braces
                     defun-close-semi
                     list-close-comma
-                    scope-operator
-                    one-liner-defun))
+                    scope-operator))
+                    ;;one-liner-defun)) ;; removed for cs 161
+            (setq c-offsets-alist
+                  '((case-label . /)
+                    (statement-case-intro . /)))
             (hs-minor-mode)))
 
 ;; switch styles for C++
@@ -94,3 +103,8 @@
           (lambda()
             (set-fill-column 80)
             (turn-on-auto-fill)))
+
+;; make C-x work as expected in term mode
+(add-hook 'term-mode-hook
+          '(lambda ()
+             (term-set-escape-char ?\C-x)))
