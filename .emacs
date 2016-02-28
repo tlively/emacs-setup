@@ -20,6 +20,9 @@
  ;; If there is more than one, they won't work right.
  )
 
+;; flag for CS161-specific features
+(setq cs-161 't)
+
 ;; let GUI emacs find aspell
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 (setq exec-path (append exec-path '("/usr/local/bin")))
@@ -51,13 +54,14 @@
 (setq whitespace-style '(face empty tabs lines-tail))
 (add-hook 'prog-mode-hook (lambda () (whitespace-mode 1)))
 
+;; turn on syntactic echoing for debugging
+(setq c-echo-syntactic-information-p t)
+
 ;; turn on fancy C mode features
 (add-hook 'c-mode-common-hook
           (lambda ()
-;;            (setq c-default-style "k&r"
-;;                  c-basic-offset 4)
-            (setq c-default-style "linux"
-                  c-basic-offset 8) ;; for CS161
+            (setq c-default-style (if cs-161 "linux" "k&r")
+                  c-basic-offset (if cs-161 8 4))
             (c-toggle-electric-state 1)
             (c-toggle-auto-newline 1)
             (c-toggle-hungry-state 1)
@@ -80,7 +84,8 @@
                      (class-open after)
                      (class-close)
                      (inline-open after)
-                     (inline-close after)))
+                     (inline-close after)
+                     (arglist-cont-nonempty)))
             (setq c-cleanup-list
                   '(empty-defun-braces
                     defun-close-semi
@@ -88,8 +93,10 @@
                     scope-operator))
                     ;;one-liner-defun)) ;; removed for cs 161
             (setq c-offsets-alist
-                  '((case-label . /)
-                    (statement-case-intro . /)))
+                  (append
+                   '((case-label . *)
+                     (statement-case-intro . *))
+                   c-offsets-alist))
             (hs-minor-mode)))
 
 ;; switch styles for C++
