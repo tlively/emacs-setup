@@ -20,18 +20,25 @@
     (("gnu" . "http://elpa.gnu.org/packages/")
      ("melpa-stable" . "http://stable.melpa.org/packages/")
      ("melpa" . "https://melpa.org/packages/"))))
- '(package-selected-packages (quote (default-text-scale rust-mode rustfmt))))
+ '(package-selected-packages
+   (quote
+    (powerline lua-mode fzf coffee-mode markdown-mode default-text-scale rust-mode))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(mode-line ((t (:background "white" :foreground "black" :box 1))))
+ '(mode-line-buffer-id ((t (:background "white" :foreground "red" :weight bold :height 1))))
+ '(mode-line-buffer-id-inactive ((t (:inherit mode-line-inactive))))
+ '(powerline-active1 ((t (:inherit mode-line :background "color-31" :foreground "brightwhite"))))
+ '(powerline-active2 ((t (:background "grey40" :foreground "white")))))
 
-;; flag for CS161-specific features
-(setq cs-161 nil)
+;; use powerline on terminal
+(unless (display-graphic-p) (powerline-default-theme))
 
+;; better zoom in GUI mode
 (global-set-key (kbd "C-M-=") 'default-text-scale-increase)
 (global-set-key (kbd "C-M--") 'default-text-scale-decrease)
 
@@ -54,6 +61,9 @@
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
 (setq scroll-step 1) ;; keyboard scroll one line at a time
 (setq scroll-conservatively 10000) ;; don't jump when scrolling
+(global-set-key [mouse-4] 'scroll-down-line) ;; tmux scrolling keys
+(global-set-key [mouse-5] 'scroll-up-line)
+(xterm-mouse-mode 1) ;; enable mouse support
 
 ;; match comment and code length
 (set-fill-column 80)
@@ -71,6 +81,9 @@
 ;; enable column number mode by default
 (setq column-number-mode t)
 
+;; line numbers
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+
 ;; enable matching paren highlighting by default
 (setq show-paren-delay 0)
 (show-paren-mode 1)
@@ -82,8 +95,11 @@
 (setq whitespace-style '(face empty tabs lines-tail))
 (add-hook 'prog-mode-hook (lambda () (whitespace-mode 1)))
 
-;; remove trailing whitespace on save
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
+;; remove trailing whitespace on save, except on markdown files
+(add-hook 'before-save-hook
+          (lambda ()
+            (unless (eq major-mode 'markdown-mode)
+              (delete-trailing-whitespace ()))))
 
 ;; turn on syntactic echoing for debugging
 (setq c-echo-syntactic-information-p t)
@@ -101,8 +117,8 @@
 ;; turn on fancy C mode features
 (add-hook 'c-mode-common-hook
           (lambda ()
-            (setq c-default-style (if cs-161 "linux" "k&r")
-                  c-basic-offset (if cs-161 8 4))
+            (setq c-default-style "k&r"
+                  c-basic-offset 4)
             (c-toggle-electric-state 1)
             (c-toggle-auto-newline 1)
             (c-toggle-hungry-state 1)
@@ -134,10 +150,13 @@
                     scope-operator))
             (hs-minor-mode)))
 
-;; switch styles for C++
+;; ;; switch styles for C++
 (add-hook 'c++-mode-hook
           (lambda ()
-            (setq c-default-style "stroustrup")))
+            (setq c-default-style "stroustrup")
+            (setq c-basic-offset 4)
+            (c-set-offset 'arglist-close '0)
+            (c-set-offset 'arglist-intro '+)))
 (put 'upcase-region 'disabled nil)
 
 ;; add word wrapping for latex mode
@@ -164,7 +183,8 @@
 
 ;; make rust mode work
 (setq rust-format-on-save 't)
-(setq rust-rustfmt-bin "/Users/Thomas/.cargo/bin/rustfmt")
+;; (setq rust-rustfmt-bin "/Users/thomas/.cargo/bin/rustfmt")
+(setq rust-rustfmt-bin "/Users/thomas/Documents/code/rustfmt/target/release/rustfmt")
 
 ;; tuareg mode (OCaml)
 (load "/Users/thomas/.opam/system/share/emacs/site-lisp/tuareg-site-file")
@@ -172,3 +192,6 @@
 
 ;; Open .v files with Proof General's Coq mode
 (load "~/.emacs.d/lisp/PG/generic/proof-site")
+
+;; FZF setup
+(setq fzf/args "--no-hscroll --margin=0,1,1,0 --print-query")
